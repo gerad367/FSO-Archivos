@@ -1,3 +1,3 @@
 #!/bin/bash
 
-gcc -o out misala.c lib/sala.c
+gcc -o misala misala.c lib/sala.c
