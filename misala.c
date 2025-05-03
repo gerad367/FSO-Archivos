@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <fcntl.h>
+#include <getopt.h>
 #include "lib/sala.h"
 
 
@@ -23,12 +24,19 @@ int main(int argc, char** argv) {
 
   int capacity;
   int overwrite = 0;
+  int sel_asientos = 0;
 
   int id;
   
   // Obtención de parámetros
+
+  struct option long_opt[] = {
+    {"asientos", no_argument, NULL, 'a'},
+    {NULL, 0, NULL, 0}
+  };
+  
   char c;
-  while ((c = getopt(argc, argv, "f:oc:")) != -1)  {
+  while ((c = getopt_long_only(argc, argv, "f:oc:", long_opt, NULL)) != -1)  {
     switch (c) {
       case 'f':
         filename = optarg;
@@ -38,6 +46,9 @@ int main(int argc, char** argv) {
         break;
       case 'c':
         capacity = atoi(optarg);
+        break;
+      case 'a':
+        sel_asientos = 1;
         break;
       default:
         printf("No reconocido.\n");
@@ -119,7 +130,23 @@ int main(int argc, char** argv) {
   }
 
   // misala anula -f ruta -asientos id_asiento1 [id_asiento2 ...]
-  
+  if (strcmp(argv[1], "anula") == 0 && sel_asientos == 1) {
+    for (int i = optind; i < argc; i++) {
+      id = atoi(argv[i]);
+      if (id <= 0 || id > capacidad_sala()) {
+        fprintf(stderr, "El id %d es inválido.\n", id);
+        continue;
+      }
+      libera_asiento(id);
+    }
+
+    if (guarda_estado_sala(filename) == -1) {
+      fprintf(stderr, "Ha ocurrido un error al guardar el estado de nuevo en el fichero.\n");
+      return -1;
+    }
+
+    return 0;
+  }  
 
   // misala estado -f ruta
   if (strcmp(argv[1], "estado") == 0) {
