@@ -1,0 +1,20 @@
+--- TODO ---
+
+[/] - Añadir funciones a la libreria.
+	[x] - guarda_estado_sala.
+	[x] - recupera_estado_sala.
+	[/] - guarda_estado_parcial_sala.
+	[ ] - recupera_estado_parcial_sala.
+
+[/] - Programa "misala"
+	[ ] - misala crea.
+	[ ] - misala reserva.
+	[ ] - misala anula -asientos.
+	[ ] - misala estado.
+
+[ ] - Reto // Opcional
+	[ ] - Mantenibilidad
+	[ ] - Eficiencia
+	[ ] - Robustez
+	[ ] - misala anula -personas.
+	[ ] - misala compara.
