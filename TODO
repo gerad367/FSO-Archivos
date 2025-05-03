@@ -6,15 +6,12 @@
 	[x] - guarda_estado_parcial_sala.
 	[x] - recupera_estado_parcial_sala.
 
-[/] - Programa "misala"
+[x] - Programa "misala"
 	[x] - misala crea.
 	[x] - misala reserva.
-	[/] - misala anula -asientos.
+	[x] - misala anula -asientos.
 	[x] - misala estado.
 
 [ ] - Reto // Opcional
-	[ ] - Mantenibilidad
-	[ ] - Eficiencia
-	[ ] - Robustez
 	[ ] - misala anula -personas.
 	[ ] - misala compara.
