@@ -27,10 +27,15 @@ int main(int argc, char** argv) {
   int sel_asientos = 0;
 
   int id;
+
+  static struct option long_options[] = {
+    {"asientos", no_argument, NULL, 'a'},
+    {NULL, 0, NULL, 0}
+  };
   
   // Obtención de parámetros
   char c;
-  while ((c = getopt(argc, argv, "f:oc:a")) != -1)  {
+  while ((c = getopt_long_only(argc, argv, "f:oc:", long_options, NULL)) != -1)  {
     switch (c) {
       case 'f':
         filename = optarg;
