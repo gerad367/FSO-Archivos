@@ -29,14 +29,8 @@ int main(int argc, char** argv) {
   int id;
   
   // Obtención de parámetros
-
-  struct option long_opt[] = {
-    {"asientos", no_argument, NULL, 'a'},
-    {NULL, 0, NULL, 0}
-  };
-  
   char c;
-  while ((c = getopt_long_only(argc, argv, "f:oc:", long_opt, NULL)) != -1)  {
+  while ((c = getopt(argc, argv, "f:oc:a")) != -1)  {
     switch (c) {
       case 'f':
         filename = optarg;
@@ -48,7 +42,8 @@ int main(int argc, char** argv) {
         capacity = atoi(optarg);
         break;
       case 'a':
-        sel_asientos = 1;
+        if (strcmp(argv[optind - 1], "-asientos") == 0)
+          sel_asientos = 1;
         break;
       default:
         printf("No reconocido.\n");
@@ -66,8 +61,8 @@ int main(int argc, char** argv) {
   // misala crea -f[o] ruta -c capacidad
   if (strcmp(argv[1], "crea") == 0) {
     // Error si la capacidad no es válida
-    if (capacity < 0) {
-      fprintf(stderr, "Introduzca un valor de capacidad correto,\n");
+    if (capacity <= 0) {
+      fprintf(stderr, "Introduzca un valor de capacidad correcto.\n");
       return -1;
     }
 

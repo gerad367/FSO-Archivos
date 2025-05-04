@@ -1,22 +1,22 @@
 
 misala crea:
-	- crear sala nueva
-	- crear sala existente marcando la opción de sobreescritura
-	- crear sala existente sin marcar la opción de sobreescritura
-	- crear sala nueva sin indicar ruta
-	- crear sala nueva sin indicar capacidad
-	- crear sala nueva cambiando el orden los parámetros
+	- [x] crear sala nueva
+	- [x] crear sala existente marcando la opción de sobreescritura
+	- [x] crear sala existente sin marcar la opción de sobreescritura
+	- [x] crear sala nueva sin indicar ruta
+	- [x] crear sala nueva sin indicar capacidad
+	- [x] crear sala con capacidad cero
 
 misala reserva:
-	- reservar un asiento
-	- reservar dos asientos
-	- reservar tantos asientos como capacidad tenga la sala
-	- reservar un asiento más que la capacidad de la sala
-	- reservar más de una vez
-	- reservar después de haber reservado toda la sala
+	- [ ] reservar un asiento
+	- [ ] reservar dos asientos
+	- [ ] reservar tantos asientos como capacidad tenga la sala
+	- [ ] reservar un asiento más que la capacidad de la sala
+	- [ ] reservar más de una vez
+	- [ ] reservar después de haber reservado toda la sala
 
 misala anula asientos:
-	- anular un asiento válido
-	- anular un asiento inválido
-	- anular un asiento reservado
-	- anular un asiento libre
+	- [ ] anular un asiento válido
+	- [ ] anular un asiento inválido
+	- [ ] anular un asiento reservado
+	- [ ] anular un asiento libre
