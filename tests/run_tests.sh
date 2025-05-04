@@ -30,5 +30,12 @@ fallos=$(( fallos + $(echo $?)))
 echo "-------------------------------------------"
 echo ""
 
+
+echo "Ejecutando tests para misala estado"
+echo ""
+./estado.sh
+fallos=$(( fallos + $(echo $?)))
+echo "-------------------------------------------"
+
 echo ""
 echo "Han ocurrido $fallos fallos"

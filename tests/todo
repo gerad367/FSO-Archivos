@@ -22,5 +22,5 @@ misala anula asientos:
 	- [x] anular un asiento libre
 
 misala estado:
-	- [ ] estado de una sala existente
-	- [ ] estado de una sala que no existe
+	- [x] estado de una sala existente
+	- [x] estado de una sala que no existe
