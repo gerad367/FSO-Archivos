@@ -8,15 +8,19 @@ misala crea:
 	- [x] crear sala con capacidad cero
 
 misala reserva:
-	- [ ] reservar un asiento
-	- [ ] reservar dos asientos
-	- [ ] reservar tantos asientos como capacidad tenga la sala
-	- [ ] reservar un asiento más que la capacidad de la sala
-	- [ ] reservar más de una vez
-	- [ ] reservar después de haber reservado toda la sala
+	- [x] reservar un asiento
+	- [x] reservar dos asientos
+	- [x] reservar un id inválido
+	- [x] reservar tantos asientos como capacidad tenga la sala
+	- [x] reservar un asiento más que la capacidad de la sala
+	- [x] reservar después de haber reservado toda la sala
 
 misala anula asientos:
-	- [ ] anular un asiento válido
-	- [ ] anular un asiento inválido
-	- [ ] anular un asiento reservado
-	- [ ] anular un asiento libre
+	- [x] anular un asiento válido
+	- [x] anular un asiento inválido
+	- [x] anular un asiento inválido (0)
+	- [x] anular un asiento libre
+
+misala estado:
+	- [ ] estado de una sala existente
+	- [ ] estado de una sala que no existe
