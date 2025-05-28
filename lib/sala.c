@@ -160,9 +160,7 @@ int recupera_estado_sala(const char* ruta_fichero) {
   }
 
   blocksize = filestat.st_blksize;
-  printf("Recuperando estado de sala con tamaño de bloque: %d\n", blocksize);
 
-  printf("Leyendo la capacidad.\n");
   int capacidad;
   if (read(file, &capacidad, sizeof(int)) != sizeof(int) || capacidad <= 0) {
     perror("Error al cargar el estado");
@@ -176,7 +174,6 @@ int recupera_estado_sala(const char* ruta_fichero) {
     return -1;
   }
 
-  printf("Leyendo los ocupados.\n");
   if (read(file, &sala.ocupados, sizeof(int)) != sizeof(int)) {
     perror("Error al cargar el estado");
     close(file);
@@ -188,13 +185,10 @@ int recupera_estado_sala(const char* ruta_fichero) {
   int data_read;
   void* data_pointer = (void*) sala.id_personas;
 
-  printf("Empezando el bucle.\n");
   while (data_to_read > 0) {
     if (data_to_read < blocksize) {
-      printf("Tamaño de datos por leer menor que el tamaño de bloque.\n");
       read_amount = data_to_read;
     }
-    printf("Intentando leer %d asientos.\n", read_amount);
     if ((data_read = read(file, data_pointer, read_amount)) != read_amount) {
       perror("Error al cargar el estado");
       close(file);
@@ -250,28 +244,20 @@ int guarda_estado_parcial_sala(const char* ruta_fichero, size_t num_asientos, in
     }
   }
 
-  printf("pre-bucle\n");
-  
   for (int i = 0; i < num_asientos; i++) {
     offset = (int)(&sala.id_personas[id_asientos[i] - 1] - sala.id_personas) * 4 + sizeof(int) * 2;
-
-    printf("offset calculado\n");
-    
+ 
     if (lseek(file, offset, SEEK_SET) == -1) {
       perror("Error al guardar estado parcial");
       close(file);
       return -1;
     }
 
-    printf("offset aplicado\n");
-
     if (read(file, &data, sizeof(int)) != sizeof(int)) {
       perror("Error al guardar estado parcial");
       close(file);
       return -1;
     }
-
-    printf("asiento leido: %d\n", data);
 
     if (data == 0 && sala.id_personas[id_asientos[i] - 1] != 0) {
       // El asiento estaba libre y ahora estará ocupado -> incrementamos el contador de asientos ocupados
@@ -280,8 +266,6 @@ int guarda_estado_parcial_sala(const char* ruta_fichero, size_t num_asientos, in
       // El asiento estaba ocuapdo y ahora estará libre -> decrementamos el contador de asientos ocupados
       ocupados--;
     }
-
-    printf("contador ajustado\n");
 
     if (lseek(file, -sizeof(int), SEEK_CUR) == -1) {
       perror("Error al guardar estado parcial");
@@ -294,11 +278,7 @@ int guarda_estado_parcial_sala(const char* ruta_fichero, size_t num_asientos, in
       close(file);
       return -1;
     }
-
-    printf("asiento escrito\n");
   }
-
-  printf("post-bucle\n");
 
   // Después de haber actualizado los valores de los asientos, actualizamos la variable de asientos ocupados
   if (lseek(file, sizeof(int), SEEK_SET) == -1) {
