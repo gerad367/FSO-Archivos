@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <sys/stat.h>
 
 struct Sala {
   int capacidad;
@@ -91,6 +92,19 @@ int guarda_estado_sala(const char* ruta_fichero) {
     return -1;
   }
 
+  // Corrección: Lectura del tamaño de bloque del fichero para lectura del fichero por bloques
+  struct stat filestat;
+  int blocksize;
+
+  if (fstat(file, &filestat) != 0) {
+    perror("Error al leer información del tamaño de bloque del fichero");
+    close(file);
+    return -1;
+  }
+
+
+  blocksize = filestat.st_blksize;
+
   if (write(file, &sala.capacidad, sizeof(int)) != 4) {
     perror("Error al guardar el estado de la sala");
     close(file);
@@ -103,14 +117,24 @@ int guarda_estado_sala(const char* ruta_fichero) {
     return -1;
   }
 
-  int size = sala.capacidad * sizeof(int);
+  int data_to_write = sala.capacidad * sizeof(int);
+  int write_amount = blocksize;
+  int data_written;
+  void* data_pointer = (void*) sala.id_personas;
 
-  if (write(file, sala.id_personas, size) != size) {
-    perror("Error al guardar el estado de la sala");
-    close(file);
-    return -1;
+  while (data_to_write > 0) {
+    if (data_to_write < blocksize) {
+      write_amount = data_to_write;
+    }
+    if ((data_written = write(file, data_pointer, write_amount)) != write_amount) {
+      perror("Error al guardar el estado de la sala");
+      close(file);
+      return -1;
+    }
+    data_pointer += data_written;
+    data_to_write -= data_written;
   }
-
+  
   close(file);
 
   return 0;
@@ -125,6 +149,20 @@ int recupera_estado_sala(const char* ruta_fichero) {
     return -1;
   }
 
+  // Corrección: Lectura del tamaño de bloque del fichero para lectura del fichero por bloques
+  struct stat filestat;
+  int blocksize;
+
+  if (fstat(file, &filestat) != 0) {
+    perror("Error al leer información del tamaño de bloque del fichero");
+    close(file);
+    return -1;
+  }
+
+  blocksize = filestat.st_blksize;
+  printf("Recuperando estado de sala con tamaño de bloque: %d\n", blocksize);
+
+  printf("Leyendo la capacidad.\n");
   int capacidad;
   if (read(file, &capacidad, sizeof(int)) != sizeof(int) || capacidad <= 0) {
     perror("Error al cargar el estado");
@@ -138,18 +176,33 @@ int recupera_estado_sala(const char* ruta_fichero) {
     return -1;
   }
 
+  printf("Leyendo los ocupados.\n");
   if (read(file, &sala.ocupados, sizeof(int)) != sizeof(int)) {
     perror("Error al cargar el estado");
     close(file);
     return -1;
   }
 
-  int size = sala.capacidad * sizeof(int);
+  int data_to_read = sala.capacidad * sizeof(int);
+  int read_amount = blocksize;
+  int data_read;
+  void* data_pointer = (void*) sala.id_personas;
 
-  if (read(file, sala.id_personas, size) != size) {
-    perror("Error al cargar el estado");
-    close(file);
-    return -1;
+  printf("Empezando el bucle.\n");
+  while (data_to_read > 0) {
+    if (data_to_read < blocksize) {
+      printf("Tamaño de datos por leer menor que el tamaño de bloque.\n");
+      read_amount = data_to_read;
+    }
+    printf("Intentando leer %d asientos.\n", read_amount);
+    if ((data_read = read(file, data_pointer, read_amount)) != read_amount) {
+      perror("Error al cargar el estado");
+      close(file);
+      return -1;
+    }
+
+    data_pointer += read_amount;
+    data_to_read -= read_amount;
   }
 
   close(file);
@@ -186,6 +239,15 @@ int guarda_estado_parcial_sala(const char* ruta_fichero, size_t num_asientos, in
     fprintf(stderr, "La capacidad de las salas no coinciden.\n");
     close(file);
     return -1;
+  }
+
+  // Corrección: Comprobar ids de los asientos antes de guardarlos
+  for (int i = 0; i < num_asientos; i++) {
+    if (id_asientos[i] <= 0 || id_asientos[i] > capacidad) {
+      fprintf(stderr, "Hay un id de asiento inválido.\n");
+      close(file);
+      return -1;
+    }
   }
 
   printf("pre-bucle\n");
@@ -280,6 +342,15 @@ int recupera_estado_parcial_sala(const char* ruta_fichero, size_t num_asientos, 
   if (capacidad != sala.capacidad) {
     fprintf(stderr, "La capacidad de las salas no coinciden.\n");
     return -1;
+  }
+
+  // Corrección: Comprobar ids de los asientos antes de guardarlos
+  for (int i = 0; i < num_asientos; i++) {
+    if (id_asientos[i] <= 0 || id_asientos[i] > capacidad) {
+      fprintf(stderr, "Hay un id de asiento inválido.\n");
+      close(file);
+      return -1;
+    }
   }
 
   for (int i = 0; i < num_asientos; i++) {
