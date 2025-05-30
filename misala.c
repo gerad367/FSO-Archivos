@@ -108,7 +108,12 @@ int main(int argc, char** argv) {
 
   // misala reserva -f ruta id_persona1 id_persona2 ...
   if (strcmp(argv[1], "reserva") == 0) {
+
+    int id_personas[argc-4];
+    int num_personas = 0;
+    
     for (int i = optind; i < argc; i++) {
+      // Si al intentar reservar un asiento no queda espacio en la sala, no se realizan cambios en la sala
       if (asientos_libres() == 0) {
         fprintf(stderr, "No quedan asientos en la sala para reservar.\n");
         return -1;
@@ -118,10 +123,16 @@ int main(int argc, char** argv) {
         fprintf(stderr, "El id de la persona es inválido.\n");
         return -1;
       }
-      reserva_asiento(id);
+      id_personas[num_personas] = reserva_asiento(id);
+      if (id_personas[num_personas] == -1) {
+        fprintf(stderr, "Ha ocurrido un error al reservar asientos.\n");
+        return -1;
+      }
+      printf("La persona con id %d ha sido asignado al asiento %d\n", id, id_personas[num_personas]);
+      num_personas++;
     }
 
-    if (guarda_estado_sala(filename) == -1) {
+    if (guarda_estado_parcial_sala(filename, num_personas, id_personas) == -1) {
       fprintf(stderr, "Ha ocurrido un error al guardar el estado de nuevo en el fichero.\n");
       return -1;
     }
@@ -131,16 +142,24 @@ int main(int argc, char** argv) {
 
   // misala anula -f ruta -asientos id_asiento1 [id_asiento2 ...]
   if (strcmp(argv[1], "anula") == 0 && sel_asientos == 1) {
+
+    int id_asientos[argc-5];
+    int num_asientos = 0;
+
     for (int i = optind; i < argc; i++) {
       id = atoi(argv[i]);
+      // Si el id del asiento a reservar es inválido, este no se tiene en cuenta
       if (id <= 0 || id > capacidad_sala()) {
         fprintf(stderr, "El id %d es inválido.\n", id);
         continue;
       }
-      libera_asiento(id);
+      if (libera_asiento(id) != -1) {
+        id_asientos[num_asientos] = id;
+        num_asientos++;
+      }
     }
 
-    if (guarda_estado_sala(filename) == -1) {
+    if (guarda_estado_parcial_sala(filename, num_asientos, id_asientos) == -1) {
       fprintf(stderr, "Ha ocurrido un error al guardar el estado de nuevo en el fichero.\n");
       return -1;
     }
